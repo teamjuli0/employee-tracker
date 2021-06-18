@@ -71,7 +71,8 @@ const addRole = (init) => {
 }
 
 const updateRole = (init) => {
-  viewCategory('employee', async (req, res) => {
+  viewCategory('employee', async (err, res) => {
+    if (err) throw err
     console.table(res)
 
     const employee = await inquirer.prompt(
@@ -82,7 +83,8 @@ const updateRole = (init) => {
       )[0]
     )
 
-    viewCategory('role', async (req, res) => {
+    viewCategory('role', async (err, res) => {
+      if (err) throw err
       const role = await inquirer.prompt(
         questions(
           'updateRole',
@@ -106,7 +108,8 @@ const updateRole = (init) => {
 }
 
 const updateManager = (init) => {
-  viewCategory('employee', async (req, res) => {
+  viewCategory('employee', async (err, res) => {
+    if (err) throw err
     console.table(res)
 
     const employeeInfo = await inquirer.prompt(
@@ -133,7 +136,8 @@ const updateManager = (init) => {
 }
 
 const viewByDepartment = (init) => {
-  viewCategory('department', async (req, res) => {
+  viewCategory('department', async (err, res) => {
+    if (err) throw err
     console.table(res)
 
     const { department } = await inquirer.prompt(
@@ -158,6 +162,145 @@ const viewByDepartment = (init) => {
   })
 }
 
+const viewByManager = (init) => {
+  viewCategory('employee', async (err, res) => {
+    const managers = res.filter((obj) => obj.manager_id === null)
+    console.table(managers)
+
+    const { manager_id } = await inquirer.prompt(
+      questions(
+        'viewByManager',
+        null,
+        managers.map((obj) => obj.id)
+      )
+    )
+
+    console.log(manager_id)
+    connection.query(
+      'SELECT employee.id, CONCAT(employee.first_name, " ", employee.last_name) AS name, role.title, role.salary, department.name AS department FROM ((employee LEFT JOIN role ON role.id = employee.role_id) LEFT JOIN department ON department.id = role.department_id) WHERE employee.manager_id = ?',
+      [manager_id],
+      (err, res) => {
+        if (err) throw err
+        console.table(res)
+      }
+    )
+
+    init()
+  })
+}
+
+const deleteEmployee = (init) => {
+  viewCategory('employee', async (err, res) => {
+    if (err) throw err
+    console.table(res)
+
+    const { id } = await inquirer.prompt(
+      questions(
+        'deleteEmployee',
+        null,
+        res.map((obj) => obj.id)
+      )
+    )
+
+    connection.query(
+      'UPDATE employee SET manager_id = null WHERE manager_id = ?',
+      [id],
+      (err, res) => {
+        if (err) throw err
+
+        connection.query(
+          'DELETE FROM employee WHERE employee.id = ?',
+          [id],
+          (err, res) => {
+            if (err) throw err
+          }
+        )
+      }
+    )
+
+    init()
+  })
+}
+
+const deleteRole = (init) => {
+  viewCategory('role', async (err, res) => {
+    if (err) throw err
+    console.table(res)
+
+    const { id } = await inquirer.prompt(
+      questions(
+        'deleteRow',
+        res.map((obj) => obj.id)
+      )
+    )
+
+    connection.query('DELETE FROM role WHERE role.id = ?', [id], (err, res) => {
+      if (err) throw err
+    })
+
+    init()
+  })
+}
+
+const deleteDepartment = (init) => {
+  viewCategory('department', async (err, res) => {
+    if (err) throw err
+    console.table(res)
+
+    const { id } = await inquirer.prompt(
+      questions(
+        'deleteDepartment',
+        null,
+        null,
+        res.map((obj) => obj.id)
+      )
+    )
+
+    console.log(id)
+    connection.query(
+      'DELETE FROM department WHERE department.id = ?',
+      [id],
+      (err, res) => {
+        if (err) throw err
+      }
+    )
+
+    init()
+  })
+}
+
+const utilizedBudget = (init) => {
+  viewCategory('department', async (err, res) => {
+    if (err) throw err
+    console.table(res)
+
+    const { id } = await inquirer.prompt(
+      questions(
+        'utilizedBudget',
+        null,
+        null,
+        res.map((obj) => obj.id)
+      )
+    )
+
+    connection.query(
+      'SELECT employee.id, CONCAT(employee.first_name, " ", employee.last_name) AS name, role.salary, department.name AS department FROM role LEFT JOIN employee ON employee.role_id = role.id LEFT JOIN department ON department.id = role.department_id WHERE department.id = ?',
+      [id],
+      (err, res) => {
+        if (err) throw err
+
+        let totalBudget = 0
+
+        res.forEach((employee) => (totalBudget += JSON.parse(employee.salary)))
+
+        console.table([{ 'Total Utilized Budget': totalBudget }])
+      }
+    )
+
+    init()
+  })
+}
+
 module.exports = {
   viewCategory,
   addEmployee,
@@ -166,4 +309,9 @@ module.exports = {
   updateRole,
   updateManager,
   viewByDepartment,
+  viewByManager,
+  deleteDepartment,
+  deleteRole,
+  deleteEmployee,
+  utilizedBudget,
 }

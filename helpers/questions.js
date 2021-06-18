@@ -16,6 +16,11 @@ module.exports = (data, roleIds, employeeIds, departmentIds) => {
             'Update Employee Role',
             'Update Employee Manager',
             'View Employees by Department',
+            'View Employees by Manager',
+            'Delete Employee',
+            'Delete Role',
+            'Delete Department',
+            "View Department's Total Utilized Budget",
             'Exit',
           ],
         },
@@ -123,6 +128,58 @@ module.exports = (data, roleIds, employeeIds, departmentIds) => {
         {
           name: 'department',
           message: 'What is the id of the department you would like to view?',
+          type: 'list',
+          choices: departmentIds,
+        },
+      ]
+    }
+    case 'viewByManager': {
+      return [
+        {
+          name: 'manager_id',
+          message:
+            'What is the id of the manager whos employees you would like to view?',
+          type: 'list',
+          choices: employeeIds,
+        },
+      ]
+    }
+    case 'deleteEmployee': {
+      return [
+        {
+          name: 'id',
+          message: 'Which employee would you like to remove?',
+          type: 'list',
+          choices: employeeIds,
+        },
+      ]
+    }
+    case 'deleteRow': {
+      return [
+        {
+          name: 'id',
+          message: 'Which role would you like to remove?',
+          type: 'list',
+          choices: roleIds,
+        },
+      ]
+    }
+    case 'deleteDepartment': {
+      return [
+        {
+          name: 'id',
+          message: 'Which department would you like to remove?',
+          type: 'list',
+          choices: departmentIds,
+        },
+      ]
+    }
+    case 'utilizedBudget': {
+      return [
+        {
+          name: 'id',
+          message:
+            "Which department's total utilized budget would you like to see?",
           type: 'list',
           choices: departmentIds,
         },

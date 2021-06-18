@@ -9,6 +9,11 @@ const {
   updateRole,
   updateManager,
   viewByDepartment,
+  viewByManager,
+  deleteEmployee,
+  deleteRole,
+  deleteDepartment,
+  utilizedBudget,
 } = helpers
 
 const init = async () => {
@@ -40,15 +45,39 @@ const init = async () => {
     }
     case 'Add a New Role': {
       addRole(init)
+      break
     }
     case 'Update Employee Role': {
       updateRole(init)
+      break
     }
     case 'Update Employee Manager': {
       updateManager(init)
+      break
     }
     case 'View Employees by Department': {
       viewByDepartment(init)
+      break
+    }
+    case 'View Employees by Manager': {
+      viewByManager(init)
+      break
+    }
+    case 'Delete Employee': {
+      deleteEmployee(init)
+      break
+    }
+    case 'Delete Role': {
+      deleteRole(init)
+      break
+    }
+    case 'Delete Department': {
+      deleteDepartment(init)
+      break
+    }
+    case "View Department's Total Utilized Budget": {
+      utilizedBudget(init)
+      break
     }
   }
 }
