@@ -132,6 +132,32 @@ const updateManager = (init) => {
   })
 }
 
+const viewByDepartment = (init) => {
+  viewCategory('department', async (req, res) => {
+    console.table(res)
+
+    const { department } = await inquirer.prompt(
+      questions(
+        'viewByDepartment',
+        null,
+        null,
+        res.map((obj) => obj.id)
+      )
+    )
+
+    connection.query(
+      'SELECT CONCAT(employee.first_name, " ", employee.last_name) AS Name, role.title, department.name AS Department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id = ?',
+      [department],
+      (err, res) => {
+        if (err) throw err
+        console.table(res)
+      }
+    )
+
+    init()
+  })
+}
+
 module.exports = {
   viewCategory,
   addEmployee,
@@ -139,4 +165,5 @@ module.exports = {
   addRole,
   updateRole,
   updateManager,
+  viewByDepartment,
 }

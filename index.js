@@ -8,6 +8,7 @@ const {
   addDepartment,
   updateRole,
   updateManager,
+  viewByDepartment,
 } = helpers
 
 const init = async () => {
@@ -45,6 +46,9 @@ const init = async () => {
     }
     case 'Update Employee Manager': {
       updateManager(init)
+    }
+    case 'View Employees by Department': {
+      viewByDepartment(init)
     }
   }
 }
