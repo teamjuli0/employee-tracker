@@ -1,8 +1,14 @@
 const inquirer = require('inquirer')
 const connection = require('./connection')
 const { questions, helpers } = require('./helpers')
-const { viewCategory, addEmployee, addRole, addDepartment, updateRole } =
-  helpers
+const {
+  viewCategory,
+  addEmployee,
+  addRole,
+  addDepartment,
+  updateRole,
+  updateManager,
+} = helpers
 
 const init = async () => {
   const { action } = await inquirer.prompt(questions('init'))
@@ -36,6 +42,9 @@ const init = async () => {
     }
     case 'Update Employee Role': {
       updateRole(init)
+    }
+    case 'Update Employee Manager': {
+      updateManager(init)
     }
   }
 }

@@ -10,11 +10,11 @@ module.exports = (data, roleIds, employeeIds, departmentIds) => {
             'View All Employees',
             'View All Departments',
             'View All Roles',
-            // 'View Employees by Manager',
             'Add an Employee',
             'Add a New Department',
             'Add a New Role',
             'Update Employee Role',
+            'Update Employee Manager',
             'Exit',
           ],
         },
@@ -98,6 +98,23 @@ module.exports = (data, roleIds, employeeIds, departmentIds) => {
             choices: roleIds,
           },
         ],
+      ]
+    }
+    case 'updateManager': {
+      return [
+        {
+          name: 'id',
+          message:
+            "What employee's manager would you like to update? (See Chart Above)",
+          type: 'list',
+          choices: employeeIds,
+        },
+        {
+          name: 'manager_id',
+          message: 'What is the id of the new manager? (See Chart Above)',
+          type: 'list',
+          choices: employeeIds,
+        },
       ]
     }
   }

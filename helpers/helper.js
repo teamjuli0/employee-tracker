@@ -105,10 +105,38 @@ const updateRole = (init) => {
   })
 }
 
+const updateManager = (init) => {
+  viewCategory('employee', async (req, res) => {
+    console.table(res)
+
+    const employeeInfo = await inquirer.prompt(
+      questions(
+        'updateManager',
+        null,
+        res.map((obj) => obj.id)
+      )
+    )
+
+    employeeInfo.manager_id === employeeInfo.id
+      ? (employeeInfo.manager_id = null)
+      : null
+
+    connection.query(
+      'UPDATE employee SET manager_id = ? WHERE id = ?',
+      [employeeInfo.manager_id, employeeInfo.id],
+      (err, res) => {
+        if (err) throw err
+      }
+    )
+    init()
+  })
+}
+
 module.exports = {
   viewCategory,
   addEmployee,
   addDepartment,
   addRole,
   updateRole,
+  updateManager,
 }
